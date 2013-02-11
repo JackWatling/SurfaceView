@@ -1,19 +1,24 @@
 package uk.co.jackwatling.surfaceview;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Callback{
 
+	//Threading
 	private SurfaceHolder holder;
 	private Thread thread;
 	private boolean running;
 	
-	private Sprite sprite;
+	//Objects
+	private ArrayList<Sprite> sprites;
 	
 	public GameView(Context context, AttributeSet attrs){
 		super(context, attrs);		
@@ -27,7 +32,26 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 		running = false;
 		
 		//Add sprite
-		sprite = new Sprite(getResources());
+		sprites = new ArrayList<Sprite>();
+		sprites.add(new Sprite(getResources()));
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent e){
+		switch(e.getAction()){
+			case MotionEvent.ACTION_DOWN:
+			{
+				//Only handle if less than 5 sprites on screen
+				if (sprites.size() >= 5)
+					return false;
+				
+				//Add new sprite
+				Point2D position = new Point2D((int) e.getX(), (int) e.getY());
+				sprites.add(new Sprite(getResources(), position.getX(), position.getY()));
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -67,11 +91,13 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	@Override
 	protected void onDraw(Canvas canvas){
 		canvas.drawColor(Color.GRAY);
-		sprite.draw(canvas);
+		for(Sprite sprite : sprites)
+			sprite.draw(canvas);
 	}
 
 	private void update() {
-		sprite.update(getWidth(), getHeight());
+		for(Sprite sprite : sprites)
+			sprite.update(getWidth(), getHeight());
 	}
 	
 }

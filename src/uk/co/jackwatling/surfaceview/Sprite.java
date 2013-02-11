@@ -12,11 +12,15 @@ public class Sprite {
 	private Point2D velocity;
 	
 	public Sprite(Resources resources){
-		texture = BitmapFactory.decodeResource(resources, R.drawable.ic_launcher);
-		position = new Point2D();
-		velocity = new Point2D(3);
+		this(resources, 0, 0);
 	}
 	
+	public Sprite(Resources resources, int x, int y) {
+		texture = BitmapFactory.decodeResource(resources, R.drawable.ic_launcher);
+		position = new Point2D(x, y);
+		velocity = new Point2D(3);
+	}
+
 	/**
 	 * Update the Sprite object, in this case the current velocity
 	 * is added to the current position of the Sprite, causing
