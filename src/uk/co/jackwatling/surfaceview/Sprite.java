@@ -11,6 +11,8 @@ public class Sprite {
 	private Point2D position;
 	private Point2D velocity;
 	private boolean colliding;
+	private boolean alive;
+	private int health;
 	
 	public Sprite(Resources resources){
 		this(resources, 0, 0);
@@ -21,10 +23,16 @@ public class Sprite {
 		position = new Point2D(x, y);
 		velocity = new Point2D(3);
 		colliding = false;
+		alive = true;
+		health = 5;
 	}
 	
 	public boolean isColliding(){
 		return colliding;		
+	}
+	
+	public boolean isDead(){
+		return !alive;
 	}
 
 	/**
@@ -46,14 +54,18 @@ public class Sprite {
 		if (atLeftRight(width)){
 			velocity.setX(velocity.getX() * -1);
 			colliding = true;
+			health--;
 		}
-			
 		
 		//Top or bottom
 		if (atTopBottom(height)){
 			velocity.setY(velocity.getY() * -1);
 			colliding = true;
-		}	
+			health--;
+		}
+		
+		if (health <= 0)
+			alive = false;
 	}
 
 	private boolean atTopBottom(int height) {

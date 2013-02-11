@@ -50,7 +50,7 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 					return false;
 				
 				//Add new sprite
-				Point2D position = new Point2D((int) e.getX(), (int) e.getY());
+				Point2D position = new Point2D( MathHelper.Clamp((int) e.getX(), 0, getWidth() - 72), MathHelper.Clamp((int) e.getY(), 0, getHeight() - 72));
 				sprites.add(new Sprite(getResources(), position.getX(), position.getY()));
 				return true;
 			}
@@ -60,7 +60,7 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {}
+			int height){}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
@@ -93,7 +93,7 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	
 	
 	@Override
-	protected void onDraw(Canvas canvas){		
+	protected void onDraw(Canvas canvas){
 		canvas.drawColor(background);
 		for(Sprite sprite : sprites)
 			sprite.draw(canvas);
@@ -101,13 +101,21 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 
 	private void update() {
 		background = Color.GRAY;
+		ArrayList<Sprite> dead = new ArrayList<Sprite>(sprites.size());
 		for(Sprite sprite : sprites)
 		{
-			sprite.update(getWidth(), getHeight());
-			if (sprite.isColliding())
-				background = Color.RED;
+			if (sprite.isDead())
+				dead.add(sprite);
+			else
+			{
+				sprite.update(getWidth(), getHeight());
+				if (sprite.isColliding())
+					background = Color.BLACK;
+			}
 		}
-			
+		
+		for(Sprite sprite : dead)
+			sprites.remove(sprite);			
 	}
 	
 }
