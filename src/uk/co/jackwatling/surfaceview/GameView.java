@@ -16,8 +16,8 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	private boolean running;
 	
 	private Bitmap icon;
-	private int x, y;
-	private int xV, yV;
+	private Point2D pos;
+	private Point2D vel;
 	
 	public GameView(Context context, AttributeSet attrs){
 		super(context, attrs);		
@@ -26,8 +26,8 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 		holder.addCallback(this);
 		thread = new Thread(this);
 		running = false;
-		x = y = 0;
-		xV = yV = 3;
+		pos = new Point2D();
+		vel = new Point2D(3);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	@Override
 	protected void onDraw(Canvas canvas){
 		canvas.drawColor(Color.GRAY);
-		canvas.drawBitmap(icon, x, y, null);
+		canvas.drawBitmap(icon, pos.getX(), pos.getY(), null);
 	}
 
 	@Override
@@ -69,12 +69,11 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	}
 
 	private void onUpdate() {
-		x += xV;
-		y += yV;
-		if (x > getWidth() - icon.getWidth() || x < 0)
-			xV *= -1;
-		if (y > getHeight() - icon.getHeight() || y < 0)
-			yV *= -1;
+		pos.add(vel);
+		if (pos.getX() > getWidth() - icon.getWidth() || pos.getX() < 0)
+			vel.setX(vel.getX() * -1);
+		if (pos.getY() > getHeight() - icon.getHeight() || pos.getY() < 0)
+			vel.setY(vel.getY() * -1);
 	}
 	
 }
