@@ -1,8 +1,6 @@
 package uk.co.jackwatling.surfaceview;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -15,19 +13,18 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	private Thread thread;
 	private boolean running;
 	
-	private Bitmap icon;
-	private Point2D pos;
-	private Point2D vel;
+	private Sprite sprite;
 	
 	public GameView(Context context, AttributeSet attrs){
 		super(context, attrs);		
-		icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+		
 		holder = getHolder();
 		holder.addCallback(this);
 		thread = new Thread(this);
 		running = false;
-		pos = new Point2D();
-		vel = new Point2D(3);
+		
+		sprite = new Sprite(getResources());
+		
 	}
 
 	@Override
@@ -55,7 +52,7 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	@Override
 	protected void onDraw(Canvas canvas){
 		canvas.drawColor(Color.GRAY);
-		canvas.drawBitmap(icon, pos.getX(), pos.getY(), null);
+		sprite.draw(canvas);
 	}
 
 	@Override
@@ -69,11 +66,7 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	}
 
 	private void onUpdate() {
-		pos.add(vel);
-		if (pos.getX() > getWidth() - icon.getWidth() || pos.getX() < 0)
-			vel.setX(vel.getX() * -1);
-		if (pos.getY() > getHeight() - icon.getHeight() || pos.getY() < 0)
-			vel.setY(vel.getY() * -1);
+		sprite.update(getWidth(), getHeight());
 	}
 	
 }
