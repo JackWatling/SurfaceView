@@ -34,11 +34,20 @@ public class Point2D {
 		this.y = y;
 	}
 	
+	/**
+	 * Allows addition of a passed point to this point
+	 * 
+	 * @param point
+	 */
 	public void add(Point2D point){
 		x += point.x;
 		y += point.y;
 	}
 	
+	/**
+	 * Allows subtraction of a passed point to this point
+	 * @param point
+	 */
 	public void sub(Point2D point){
 		x -= point.x;
 		y -= point.y;

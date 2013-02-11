@@ -18,24 +18,25 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	public GameView(Context context, AttributeSet attrs){
 		super(context, attrs);		
 		
+		//Get surface holder
 		holder = getHolder();
 		holder.addCallback(this);
+		
+		//Threading
 		thread = new Thread(this);
 		running = false;
 		
+		//Add sprite
 		sprite = new Sprite(getResources());
-		
 	}
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
-		// TODO Auto-generated method stub
-		
-	}
+			int height) {}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		//Start thread
 		thread.start();
 		running = true;
 	}
@@ -48,6 +49,20 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void run() {
+		//Loop while running is true
+		while (running){
+			update();
+			
+			//Lock canvas, draw, then unlock canvas
+			Canvas canvas = holder.lockCanvas();
+			onDraw(canvas);
+			holder.unlockCanvasAndPost(canvas);
+		}
+	}
+	
 	
 	@Override
 	protected void onDraw(Canvas canvas){
@@ -55,17 +70,7 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 		sprite.draw(canvas);
 	}
 
-	@Override
-	public void run() {
-		while (running){
-			onUpdate();
-			Canvas canvas = holder.lockCanvas();
-			onDraw(canvas);
-			holder.unlockCanvasAndPost(canvas);
-		}
-	}
-
-	private void onUpdate() {
+	private void update() {
 		sprite.update(getWidth(), getHeight());
 	}
 	

@@ -16,13 +16,36 @@ public class Sprite {
 		position = new Point2D();
 		velocity = new Point2D(3);
 	}
-
+	
+	/**
+	 * Update the Sprite object, in this case the current velocity
+	 * is added to the current position of the Sprite, causing
+	 * movement on the screen.
+	 * <p>
+	 * If the sprite touches the edge of the screen the velocity is
+	 * reversed in the appropriate direction.
+	 * 
+	 * @param width
+	 * @param height
+	 */
 	public void update(int width, int height){
 		position.add(velocity);
-		if (position.getX() > width - texture.getWidth() || position.getX() < 0)
+		
+		//Left or right
+		if (atLeftRight(width))
 			velocity.setX(velocity.getX() * -1);
-		if (position.getY() > height - texture.getHeight() || position.getY() < 0)
+		
+		//Top or bottom
+		if (atTopBottom(height))
 			velocity.setY(velocity.getY() * -1);
+	}
+
+	private boolean atTopBottom(int height) {
+		return position.getY() > height - texture.getHeight() || position.getY() < 0;
+	}
+
+	private boolean atLeftRight(int width) {
+		return position.getX() > width - texture.getWidth() || position.getX() < 0;
 	}
 	
 	public void draw(Canvas canvas) {
