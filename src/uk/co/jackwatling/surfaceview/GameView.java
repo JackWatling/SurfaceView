@@ -19,6 +19,7 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	
 	//Objects
 	private ArrayList<Sprite> sprites;
+	private int background;
 	
 	public GameView(Context context, AttributeSet attrs){
 		super(context, attrs);		
@@ -34,6 +35,9 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 		//Add sprite
 		sprites = new ArrayList<Sprite>();
 		sprites.add(new Sprite(getResources()));
+		
+		//Background
+		background = Color.GRAY;
 	}
 	
 	@Override
@@ -89,15 +93,21 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	
 	
 	@Override
-	protected void onDraw(Canvas canvas){
-		canvas.drawColor(Color.GRAY);
+	protected void onDraw(Canvas canvas){		
+		canvas.drawColor(background);
 		for(Sprite sprite : sprites)
 			sprite.draw(canvas);
 	}
 
 	private void update() {
+		background = Color.GRAY;
 		for(Sprite sprite : sprites)
+		{
 			sprite.update(getWidth(), getHeight());
+			if (sprite.isColliding())
+				background = Color.RED;
+		}
+			
 	}
 	
 }

@@ -7,9 +7,10 @@ import android.graphics.Canvas;
 
 public class Sprite {
 	
-	Bitmap texture;
+	private Bitmap texture;
 	private Point2D position;
 	private Point2D velocity;
+	private boolean colliding;
 	
 	public Sprite(Resources resources){
 		this(resources, 0, 0);
@@ -19,6 +20,11 @@ public class Sprite {
 		texture = BitmapFactory.decodeResource(resources, R.drawable.ic_launcher);
 		position = new Point2D(x, y);
 		velocity = new Point2D(3);
+		colliding = false;
+	}
+	
+	public boolean isColliding(){
+		return colliding;		
 	}
 
 	/**
@@ -34,14 +40,20 @@ public class Sprite {
 	 */
 	public void update(int width, int height){
 		position.add(velocity);
+		colliding = false;
 		
 		//Left or right
-		if (atLeftRight(width))
+		if (atLeftRight(width)){
 			velocity.setX(velocity.getX() * -1);
+			colliding = true;
+		}
+			
 		
 		//Top or bottom
-		if (atTopBottom(height))
+		if (atTopBottom(height)){
 			velocity.setY(velocity.getY() * -1);
+			colliding = true;
+		}	
 	}
 
 	private boolean atTopBottom(int height) {
