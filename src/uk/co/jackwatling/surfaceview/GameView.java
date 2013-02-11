@@ -9,16 +9,21 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback{
+public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Callback{
 
 	private SurfaceHolder holder;
+	private Thread thread;
+	private boolean running;
+	
 	private Bitmap icon;
 	
 	public GameView(Context context, AttributeSet attrs){
-		super(context, attrs);
+		super(context, attrs);		
 		icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
 		holder = getHolder();
 		holder.addCallback(this);
+		thread = new Thread(this);
+		running = false;
 	}
 
 	@Override
@@ -30,21 +35,32 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		Canvas canvas = holder.lockCanvas();
-		onDraw(canvas);
-		holder.unlockCanvasAndPost(canvas);
+		thread.start();
+		running = true;
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
-		
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	protected void onDraw(Canvas canvas){
 		canvas.drawColor(Color.GRAY);
 		canvas.drawBitmap(icon, (getWidth() - icon.getWidth()) / 2, (getHeight() - icon.getHeight()) / 2, null);
+	}
+
+	@Override
+	public void run() {
+		while (running){
+			Canvas canvas = holder.lockCanvas();
+			onDraw(canvas);
+			holder.unlockCanvasAndPost(canvas);
+		}
 	}
 	
 }
