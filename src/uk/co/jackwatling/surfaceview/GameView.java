@@ -46,13 +46,15 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 			case MotionEvent.ACTION_DOWN:
 			{
 				//Only handle if less than 5 sprites on screen
-				if (sprites.size() >= 5)
+				if (sprites.size() >= 50)
 					return false;
 				
 				//Add new sprite
-				Point2D position = new Point2D( MathHelper.Clamp((int) e.getX(), 0, getWidth() - 72), MathHelper.Clamp((int) e.getY(), 0, getHeight() - 72));
-				sprites.add(new Sprite(getResources(), position.getX(), position.getY()));
-				return true;
+				synchronized(holder){
+					Point2D position = new Point2D( MathHelper.Clamp((int) e.getX(), 0, getWidth() - 72), MathHelper.Clamp((int) e.getY(), 0, getHeight() - 72));
+					sprites.add(new Sprite(getResources(), position.getX(), position.getY()));
+					return true;
+				}
 			}
 		}
 		return false;
@@ -82,12 +84,17 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	public void run() {
 		//Loop while running is true
 		while (running){
-			update();
-			
-			//Lock canvas, draw, then unlock canvas
-			Canvas canvas = holder.lockCanvas();
-			onDraw(canvas);
-			holder.unlockCanvasAndPost(canvas);
+			Canvas c = null;
+			try{
+				c = holder.lockCanvas();
+				synchronized(holder){
+					update();
+					onDraw(c);
+				}
+			} finally {
+				if (c != null)
+					holder.unlockCanvasAndPost(c);
+			}
 		}
 	}
 	
